@@ -1,4 +1,4 @@
-FROM php:7.1.30-apache-stretch
+FROM php:7.2.30-apache-stretch
 
 # Instalacion de librerias
 RUN apt-get update && apt-get install -y \
@@ -7,17 +7,19 @@ RUN apt-get update && apt-get install -y \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng-dev \
-        libaio1 \		
-		libbz2-dev \
-		libssl-dev \
-		libgmp-dev \
-		libldap2-dev \
-		mysql-client \
-		librecode0 \
-		librecode-dev \
-		libxslt-dev \
+        libaio1 \
+                libbz2-dev \
+                libssl-dev \
+                libgmp-dev \
+                libldap2-dev \
+                mysql-client \
+                librecode0 \
+                librecode-dev \
+                libxslt-dev \
+    && pecl install mcrypt-1.0.2 \
+    && docker-php-ext-enable mcrypt \
     && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-install -j$(nproc) iconv mcrypt gettext \
+    && docker-php-ext-install -j$(nproc) iconv gettext \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd
 # Instalacion de SOAP
@@ -27,7 +29,7 @@ RUN apt-get update -y \
      libxml2-dev \
      php-soap \
   && apt-get clean -y \
-  && docker-php-ext-install soap 
+  && docker-php-ext-install soap
 
 # Configuraciones adicionales
 COPY docker-php.conf /etc/apache2/conf-enabled/docker-php.conf
@@ -68,8 +70,8 @@ RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu
 RUN docker-php-ext-install ldap
 
 RUN docker-php-ext-install mbstring
-RUN docker-php-ext-install mcrypt
-RUN docker-php-ext-install pdo_mysql 
+#RUN docker-php-ext-install mcrypt
+RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install mysqli
 #RUN docker-php-ext-install posix
 #RUN docker-php-ext-install recode
