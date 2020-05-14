@@ -84,6 +84,10 @@ RUN docker-php-ext-install wddx
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install xsl
 
+# Configuracion Apache
+RUN ln -s /etc/apache2/mods-available/ssl.load  /etc/apache2/mods-enabled/ssl.load
+
+
 RUN echo "<?php echo phpinfo(); ?>" > /var/www/html/phpinfo.php
 
-EXPOSE 80
+EXPOSE 80 443
