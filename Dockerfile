@@ -1,4 +1,4 @@
-FROM php:7.2.30-apache-stretch
+FROM php:7.3.29-apache-buster
 
 # Instalacion de librerias
 RUN apt-get update && apt-get install -y \
@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
                 libssl-dev \
                 libgmp-dev \
                 libldap2-dev \
-                mysql-client \
+                mariadb-client \
                 librecode0 \
                 librecode-dev \
                 libxslt-dev \
@@ -50,7 +50,7 @@ RUN ln -s /usr/local/instantclient/libclntsh.so.12.1 /usr/local/instantclient/li
 RUN ln -s /usr/local/instantclient/libocci.so.12.1 /usr/local/instantclient/libocci.so
 
 ENV LD_LIBRARY_PATH=/usr/local/instantclient
-RUN echo 'instantclient,/usr/local/instantclient' | pecl install oci8
+RUN echo 'instantclient,/usr/local/instantclient' | pecl install oci8-2.2.0
 
 RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient
 RUN docker-php-ext-install pdo_oci
@@ -81,9 +81,13 @@ RUN docker-php-ext-install xmlrpc
 RUN docker-php-ext-install sockets
 RUN docker-php-ext-install tokenizer
 RUN docker-php-ext-install wddx
-RUN docker-php-ext-install zip
+#RUN docker-php-ext-configure zip --with-libzip
+#RUN docker-php-ext-install zip
 RUN docker-php-ext-install xsl
 
+RUN apt-get install -y zip libzip-dev \
+  && docker-php-ext-configure zip --with-libzip \
+  && docker-php-ext-install zip
 # Configuracion Apache
 RUN ln -s /etc/apache2/mods-available/ssl.load  /etc/apache2/mods-enabled/ssl.load
 
